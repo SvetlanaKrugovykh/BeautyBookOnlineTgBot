@@ -1,102 +1,54 @@
-const guestStartButtons = {
-  title: 'Оберіть, будь ласка, дію',
-  options: [{ resize_keyboard: true }],
-  buttons: [
-    [{ text: 'Здійснити on-line запис.', callback_data: '0_1' }],
-    [{ text: 'Надіслати повідомлення.', callback_data: '0_2' }],
-    [{ text: 'Зареєструватися.', callback_data: '0_3' }]
-  ]
-}
+const { locations } = require('../data/locations')
 
-const adminStartButtons = {
-  title: 'Choose an action',
-  options: [{ resize_keyboard: true }],
-  buttons: [
-    [{ text: 'Clients support.', callback_data: '2_1' }]
-  ]
-}
+const buttonsConfig = {
+  guestStartButtons: {
+    title: 'Оберіть, будь ласка, дію',
+    options: [{ resize_keyboard: true }],
+    buttons: [
+      [{ text: 'Здійснити on-line запис.', callback_data: '0_1' }],
+      [{ text: 'Надіслати повідомлення.', callback_data: '0_2' }],
+      [{ text: 'Зареєструватися.', callback_data: '0_3' }],
+      [{ text: '↩', callback_data: '0_4' }]
+    ]
+  },
 
-const clientAdminStarterButtons = {
-  title: 'Choose a starter admin action',
-  options: [{ resize_keyboard: true }],
-  buttons: [
-    [{ text: 'Отримати інформацію про клієнта.', callback_data: '3_1' }],
-    [{ text: 'Надіслати відповідь на звернення.', callback_data: '3_2' }],
-    [{ text: 'Return.', callback_data: '3_3' }]
-  ]
-}
+  locationsButtons: {
+    title: 'Оберіть будь ласка локацію',
+    options: [{ resize_keyboard: true }],
+    buttons: locations.map(location => [
+      { text: `${location.descr} (${location.address})`, callback_data: `1_${location.id}` }
+    ])
+  },
 
+  masterOrServiceButtons: {
+    title: 'Оберіть будь ласка майстра або послугу',
+    options: [{ resize_keyboard: true }],
+    buttons: [
+      [{ text: 'Обрати майстра.', callback_data: '1_31' }],
+      [{ text: 'Обрати послугу.', callback_data: '1_32' }],
+      [{ text: '↩', callback_data: '1_33' }]
+    ]
+  },
 
-function clientAdminChoiceClientFromList(bot, msg, parsedData) {
-  try {
-    const ClientsValues = parsedData.ResponseArray.map((item, index) => {
-      let value = item['Контрагент']
-      if (item['АдресДом']) {
-        value += '#H' + item['АдресДом']
-        if (item['АдресКвартира']) {
-          value += '#A' + item['АдресКвартира']
-        }
-      }
-      return {
-        id: index,
-        value: value,
-      }
-    })
+  adminStartButtons: {
+    title: 'Choose an action',
+    options: [{ resize_keyboard: true }],
+    buttons: [
+      [{ text: 'Clients support.', callback_data: '2_1' }]
+    ]
+  },
 
-    const buttonsPerRow = 2
-    const clientChoiceButtons = {
-      title: 'Choose an client from list:',
-      options: [{ resize_keyboard: true }],
-      buttons: []
-    }
-
-    let currentRow = []
-    ClientsValues.forEach((item) => {
-      const callbackData = `11_${item.id + 1}`
-      const button = { text: item.value, callback_data: callbackData }
-      currentRow.push(button)
-
-      if (currentRow.length === buttonsPerRow) {
-        clientChoiceButtons.buttons.push(currentRow)
-        currentRow = []
-      }
-    })
-
-    if (currentRow.length > 0) {
-      clientChoiceButtons.buttons.push(currentRow)
-    }
-
-    const returnButton = { text: 'Rеturn', callback_data: '11_99' }
-    const homeButton = { text: 'Home', callback_data: '11_98' }
-
-    if (
-      clientChoiceButtons.buttons.length > 0 &&
-      clientChoiceButtons.buttons[clientChoiceButtons.buttons.length - 1].length < buttonsPerRow
-    ) {
-      clientChoiceButtons.buttons[clientChoiceButtons.buttons.length - 1].push(homeButton)
-      clientChoiceButtons.buttons[clientChoiceButtons.buttons.length - 1].push(returnButton)
-    } else {
-      clientChoiceButtons.buttons.push([homeButton])
-      clientChoiceButtons.buttons.push([returnButton])
-    }
-
-    return clientChoiceButtons
-  } catch (err) {
-    console.log(err)
+  clientAdminStarterButtons: {
+    title: 'Choose a starter admin action',
+    options: [{ resize_keyboard: true }],
+    buttons: [
+      [{ text: 'Отримати інформацію про клієнта.', callback_data: '3_1' }],
+      [{ text: 'Надіслати відповідь на звернення.', callback_data: '3_2' }],
+      [{ text: 'Return.', callback_data: '3_3' }]
+    ]
   }
 }
 
-const retunAdminButtons = {
-  title: 'Choose a starter admin action',
-  options: [{ resize_keyboard: true }],
-  buttons: [
-    [{ text: 'Rеturn', callback_data: '11_99' }],
-    [{ text: 'Home', callback_data: '11_98' }]
-  ]
-}
-
-const constants = [guestStartButtons, adminStartButtons, clientAdminStarterButtons, retunAdminButtons]
-
-module.exports = { guestStartButtons, adminStartButtons, clientAdminStarterButtons, constants, clientAdminChoiceClientFromList }
+module.exports = { buttonsConfig }
 
 

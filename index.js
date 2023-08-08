@@ -4,9 +4,9 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 require('dotenv').config()
 
-const { guestStartButtons, adminStartButtons } = require('./modules/keyboard')
+const { buttonsConfig } = require('./modules/keyboard')
 const { users } = require('./users/users.model')
-const { handler, guestMenu, userMenu, adminMenu } = require('./controllers/switcher')
+const { handler, guestMenu, adminMenu } = require('./controllers/switcher')
 const singUpDataSave = require('./controllers/signUp').singUpDataSave
 const formController = require('./controllers/formController')
 
@@ -31,13 +31,13 @@ bot.on('message', async (msg) => {
     const adminUser = users.find(user => user.id === ctx.chat.id)
     if (!adminUser) {
       try {
-        await guestMenu(bot, msg, guestStartButtons)
+        await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
       } catch (err) {
         console.log(err)
       }
     } else {
       try {
-        await adminMenu(bot, msg, adminStartButtons)
+        await adminMenu(bot, msg, buttonsConfig["adminStartButtons"])
       } catch (err) {
         console.log(err)
       }

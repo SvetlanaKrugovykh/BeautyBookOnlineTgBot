@@ -1,14 +1,13 @@
-const { constants, adminStartButtons } = require('../modules/keyboard')
+const { buttonsConfig } = require('../modules/keyboard')
 const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = require('./clientsAdmin')
 const supportScene = require('./support')
-const receiptScene = require('./receipt')
+const { bookOnLineScene, bookMasterScene, bookServiceScene } = require('./bookOnLine')
 const signUpForm = require('./signUp').signUpForm
 const regexIP = /^(\?|)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(#|)$/
 
 function getCallbackData(text) {
-  for (const constant of Object.values(constants)) {
-    const buttons = constant.buttons
-    for (const buttonRow of buttons) {
+  for (const buttonSet of Object.values(buttonsConfig)) {
+    for (const buttonRow of buttonSet.buttons) {
       for (const button of buttonRow) {
         if (button.text === text) {
           return button.callback_data
@@ -19,13 +18,12 @@ function getCallbackData(text) {
   return null
 }
 
-
 async function handler(bot, msg, webAppUrl) {
   const data = getCallbackData(msg.text)
   console.log('The choise is:', data)
   switch (data) {
     case '0_1':
-      await receiptScene(bot, msg, false)
+      await bookOnLineScene(bot, msg, false)
       break
     case '0_2':
       await supportScene(bot, msg, false)
@@ -33,11 +31,29 @@ async function handler(bot, msg, webAppUrl) {
     case '0_3':
       await signUpForm(bot, msg, webAppUrl)
       break
+    case '0_4':
+      await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
+      break
     case '1_1':
-      await receiptScene(bot, msg, true)
+      await bookOnLineScene(bot, msg, data)
       break
     case '1_2':
-      await supportScene(bot, msg, true)
+      await bookOnLineScene(bot, msg, data)
+      break
+    case '1_3':
+      await bookOnLineScene(bot, msg, data)
+      break
+    case '1_4':
+      await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
+      break
+    case '1_31':
+      await bookMasterScene(bot, msg)
+      break
+    case '1_32':
+      await bookServiceScene(bot, msg)
+      break
+    case '1_33':
+      await bookOnLineScene(bot, msg, false)
       break
     case '2_1':
       await clientsAdmin(bot, msg)
@@ -73,9 +89,9 @@ async function handler(bot, msg, webAppUrl) {
 
 async function guestMenu(bot, msg, guestStartButtons) {
   await bot.sendMessage(msg.chat.id, `Чат-бот <b>${process.env.BRAND_NAME}</b> вітає Вас, <b>${msg.chat.first_name} ${msg.chat.last_name}</b>!`, { parse_mode: "HTML" })
-  await bot.sendMessage(msg.chat.id, guestStartButtons.title, {
+  await bot.sendMessage(msg.chat.id, buttonsConfig["guestStartButtons"].title, {
     reply_markup: {
-      keyboard: guestStartButtons.buttons,
+      keyboard: buttonsConfig["guestStartButtons"].buttons,
       resize_keyboard: true
     }
   })
@@ -83,9 +99,9 @@ async function guestMenu(bot, msg, guestStartButtons) {
 
 async function adminMenu(bot, msg, adminStartButtons) {
   await bot.sendMessage(msg.chat.id, `Вітаю та бажаю приємного спілкування!, ${msg.chat.first_name} ${msg.chat.last_name}!`)
-  await bot.sendMessage(msg.chat.id, adminStartButtons.title, {
+  await bot.sendMessage(msg.chat.id, buttonsConfig["adminStartButtons"].title, {
     reply_markup: {
-      keyboard: adminStartButtons.buttons,
+      keyboard: buttonsConfig["adminStartButtons"].buttons,
       resize_keyboard: true
     }
   })
