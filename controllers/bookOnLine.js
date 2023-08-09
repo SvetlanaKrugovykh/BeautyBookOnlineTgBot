@@ -4,6 +4,8 @@ const { buttonsConfig } = require('../modules/keyboard')
 const inputLineScene = require('./inputLine')
 
 let selectedLocationId = {}
+let masters = {}
+let services = {}
 
 async function bookOnLineScene(bot, msg, locationId) {
   try {
@@ -34,8 +36,26 @@ async function bookMasterScene(bot, msg) {
   try {
     const chatId = msg.chat.id
     const data = await sendReqToDB('__GetMasters__', msg.chat, selectedLocationId[chatId])
-    const parsedData = JSON.parse(data)
+    const parsedData = JSON.parse(data).ResponseArray
+    masters[chatId] = parsedData
+    if (parsedData.length !== 0 && parsedData[0] !== null && parsedData[0] !== 'nothing found') {
+      const mastersButtons = {
+        title: 'Оберіть будь ласка майстра',
+        options: [{ resize_keyboard: true }],
+        buttons: parsedData.map(master => [
+          { text: `${master.name} `, callback_data: `33_${master.id}` }
+        ])
+      }
+      await bot.sendMessage(chatId, mastersButtons.title, {
+        reply_markup: {
+          keyboard: mastersButtons.buttons,
+          resize_keyboard: true
+        }
+      })
 
+    } else {
+      await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних майстрів. Спробуйте пізніше.')
+    }
   } catch (err) {
     console.log(err)
   }
@@ -45,13 +65,29 @@ async function bookServiceScene(bot, msg) {
   try {
     const chatId = msg.chat.id
     const data = await sendReqToDB('__GetServices__', msg.chat, selectedLocationId[chatId])
-    const parsedData = JSON.parse(data)
+    const parsedData = JSON.parse(data).ResponseArray
+    services[chatId] = parsedData
+    if (parsedData.length !== 0 && parsedData[0] !== null && parsedData[0] !== 'nothing found') {
+      const servicesButtons = {
+        title: 'Оберіть будь ласка послугу',
+        options: [{ resize_keyboard: true }],
+        buttons: parsedData.map(service => [
+          { text: `${service.name} `, callback_data: `43_${service.id}` }
+        ])
+      }
+      await bot.sendMessage(chatId, servicesButtons.title, {
+        reply_markup: {
+          keyboard: servicesButtons.buttons,
+          resize_keyboard: true
+        }
+      })
 
-
-
+    } else {
+      await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних послуг. Оберіть іншу локацію.')
+    }
   } catch (err) {
     console.log(err)
   }
 }
 
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene }
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, masters, services }

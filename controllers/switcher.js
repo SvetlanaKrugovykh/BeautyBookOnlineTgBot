@@ -1,9 +1,12 @@
 const { buttonsConfig } = require('../modules/keyboard')
 const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = require('./clientsAdmin')
+const { schedullerScene } = require('./scheduler')
 const supportScene = require('./support')
-const { bookOnLineScene, bookMasterScene, bookServiceScene } = require('./bookOnLine')
+const { bookOnLineScene, bookMasterScene, bookServiceScene, masters, services } = require('./bookOnLine')
 const signUpForm = require('./signUp').signUpForm
 const regexIP = /^(\?|)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(#|)$/
+let selectedMaster = {}
+let selectedService = {}
 
 function getCallbackData(text) {
   for (const buttonSet of Object.values(buttonsConfig)) {
@@ -79,6 +82,10 @@ async function handler(bot, msg, webAppUrl) {
     default:
       console.log(`default: ${msg.text}`)
       try {
+
+        if (masters[msg.chat.id].length !== 0) {
+          schedullerScene(bot, msg, masters[msg.chat.id])
+        }
         if (msg.text.length > 3 && msg.text.includes('#H') && !regexIP.test(msg.text)) {
           clientsAdminGetInfo(bot, msg, msg.text)
         }
