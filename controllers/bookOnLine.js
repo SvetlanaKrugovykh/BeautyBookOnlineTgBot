@@ -46,6 +46,7 @@ async function bookMasterScene(bot, msg) {
           { text: `${master.name} `, callback_data: `33_${master.id}` }
         ])
       }
+      mastersButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
       await bot.sendMessage(chatId, mastersButtons.title, {
         reply_markup: {
           keyboard: mastersButtons.buttons,
@@ -75,6 +76,7 @@ async function bookServiceScene(bot, msg) {
           { text: `${service.name} `, callback_data: `43_${service.id}` }
         ])
       }
+      servicesButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
       await bot.sendMessage(chatId, servicesButtons.title, {
         reply_markup: {
           keyboard: servicesButtons.buttons,

@@ -82,12 +82,8 @@ async function handler(bot, msg, webAppUrl) {
     default:
       console.log(`default: ${msg.text}`)
       try {
-
         if (masters[msg.chat.id].length !== 0) {
           schedullerScene(bot, msg, masters[msg.chat.id])
-        }
-        if (msg.text.length > 3 && msg.text.includes('#H') && !regexIP.test(msg.text)) {
-          clientsAdminGetInfo(bot, msg, msg.text)
         }
       } catch (error) { console.log(error) }
       break

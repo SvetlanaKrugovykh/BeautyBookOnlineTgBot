@@ -24,7 +24,7 @@ async function sendReqToDB(reqType, data, text) {
       console.log(response.status)
       return null
     } else {
-      if (reqType === '__GetMasters__') {
+      if (reqType === '__GetMasters__' || reqType === '__GetServicess__') {
         return response.data
       } else {
         let answer = response.data.toString()
@@ -44,8 +44,8 @@ function objToString(reqType, data, text) {
   switch (reqType) {
     case '__GetMasters__':
       return (text)
-    case '__CheckTlgClient__':
-      return (data.id + '#' + data.first_name + '#' + data.last_name + '#' + data.username)
+    case '__GetServices__':
+      return (text)
     case '___UserRegistration__':
       return (text + '#' + data?.email + '#' + data?.phoneNumber + '#' + data?.password + '#' + data?.PIB + '#' + data?.contract + '#' + data?.address + '#' + text)
     default:
