@@ -79,7 +79,7 @@ async function bookServiceScene(bot, msg) {
       servicesButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
       await bot.sendMessage(chatId, servicesButtons.title, {
         reply_markup: {
-          keyboard: servicesButtons.buttons,
+          inline_keyboard: servicesButtons.buttons,
           resize_keyboard: true
         }
       })

@@ -62,7 +62,8 @@ async function handler(bot, msg, webAppUrl) {
       await bookOnLineScene(bot, msg, false)
       break
     case '1_40':
-      await bookTimeScene(bot, msg)
+      ///await bookTimeScene(bot, msg)
+      await schedullerScene(bot, msg, masters)
       break
     case '1_41':
       await bookServiceScene(bot, msg)
