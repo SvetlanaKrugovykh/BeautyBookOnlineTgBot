@@ -2,7 +2,7 @@ const { buttonsConfig } = require('../modules/keyboard')
 const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = require('./clientsAdmin')
 const { schedullerScene } = require('./scheduler')
 const supportScene = require('./support')
-const { bookOnLineScene, bookMasterScene, bookServiceScene, masters, services } = require('./bookOnLine')
+const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masters, services } = require('./bookOnLine')
 const signUpForm = require('./signUp').signUpForm
 const regexIP = /^(\?|)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(#|)$/
 let selectedMaster = {}
@@ -49,14 +49,23 @@ async function handler(bot, msg, webAppUrl) {
     case '1_4':
       await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
       break
-    case '1_31':
+    case '1_30':
       await bookMasterScene(bot, msg)
       break
-    case '1_32':
+    case '1_31':
       await bookServiceScene(bot, msg)
+      break
+    case '1_32':
+      await bookAnyScene(bot, msg)
       break
     case '1_33':
       await bookOnLineScene(bot, msg, false)
+      break
+    case '1_40':
+      await bookTimeScene(bot, msg)
+      break
+    case '1_41':
+      await bookServiceScene(bot, msg)
       break
     case '2_1':
       await clientsAdmin(bot, msg)
@@ -82,9 +91,9 @@ async function handler(bot, msg, webAppUrl) {
     default:
       console.log(`default: ${msg.text}`)
       try {
-        if (masters[msg.chat.id].length !== 0) {
-          schedullerScene(bot, msg, masters[msg.chat.id])
-        }
+        // if (masters[msg.chat.id].length !== 0) {
+        //   schedullerScene(bot, msg, masters[msg.chat.id])
+        // }
       } catch (error) { console.log(error) }
       break
   }

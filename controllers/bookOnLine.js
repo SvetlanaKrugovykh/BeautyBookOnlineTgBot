@@ -43,7 +43,7 @@ async function bookMasterScene(bot, msg) {
         title: 'Оберіть будь ласка майстра',
         options: [{ resize_keyboard: true }],
         buttons: parsedData.map(master => [
-          { text: `${master.name} `, callback_data: `33_${master.id}` }
+          { text: `${master.name} #${master.jobTitle} `, callback_data: `33_${master.id}` }
         ])
       }
       mastersButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
@@ -92,4 +92,28 @@ async function bookServiceScene(bot, msg) {
   }
 }
 
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, masters, services }
+async function bookAnyScene(bot, msg) {
+  try {
+    const chatId = msg.chat.id
+    await bot.sendMessage(msg.chat.id, buttonsConfig["anyChoiceButtons"].title, {
+      reply_markup: {
+        keyboard: buttonsConfig["anyChoiceButtons"].buttons,
+        resize_keyboard: true
+      }
+    })
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+async function bookTimeScene(bot, msg) {
+  try {
+    const chatId = msg.chat.id
+
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masters, services }
