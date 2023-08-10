@@ -92,9 +92,10 @@ async function handler(bot, msg, webAppUrl) {
     default:
       console.log(`default: ${msg.text}`)
       try {
-        // if (masters[msg.chat.id].length !== 0) {
-        //   schedullerScene(bot, msg, masters[msg.chat.id])
-        // }
+        if (msg.text.includes('#')) {
+          console.log('Обрано майстра зі списку', msg.text)
+          await bot.sendMessage(msg.chat.id, `Обрано майстра ${msg.text}`)
+        }
       } catch (error) { console.log(error) }
       break
   }

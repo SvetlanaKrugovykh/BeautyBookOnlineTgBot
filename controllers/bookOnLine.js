@@ -3,9 +3,9 @@ const sendReqToDB = require('../modules/tlg_to_DB')
 const { buttonsConfig } = require('../modules/keyboard')
 const inputLineScene = require('./inputLine')
 
-let selectedLocationId = {}
-let masters = {}
-let services = {}
+const selectedLocationId = {}
+const masters = {}
+const services = {}
 
 async function bookOnLineScene(bot, msg, locationId) {
   try {
