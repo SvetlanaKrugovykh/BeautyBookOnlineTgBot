@@ -1,12 +1,11 @@
 const { buttonsConfig } = require('../modules/keyboard')
 const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = require('./clientsAdmin')
-const { schedullerScene } = require('./scheduler')
+const { schedullerScene, handleTimeSelection } = require('./scheduler')
 const supportScene = require('./support')
-const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masters, services } = require('./bookOnLine')
+const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookingScene, selectedLocationId } = require('./bookOnLine')
 const signUpForm = require('./signUp').signUpForm
-const regexIP = /^(\?|)\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(#|)$/
-let selectedMaster = {}
-let selectedService = {}
+const selectedMaster = {}
+const selectedService = {}
 
 function getCallbackData(text) {
   for (const buttonSet of Object.values(buttonsConfig)) {
@@ -62,8 +61,7 @@ async function handler(bot, msg, webAppUrl) {
       await bookOnLineScene(bot, msg, false)
       break
     case '1_40':
-      ///await bookTimeScene(bot, msg)
-      await schedullerScene(bot, msg, masters)
+      await schedullerScene(bot, msg)
       break
     case '1_41':
       await bookServiceScene(bot, msg)
@@ -94,7 +92,21 @@ async function handler(bot, msg, webAppUrl) {
       try {
         if (msg.text.includes('#')) {
           console.log('Обрано майстра зі списку', msg.text)
+          selectedMaster[msg.chat.id] = msg.text
           await bot.sendMessage(msg.chat.id, `Обрано майстра ${msg.text}`)
+          if (!selectedService[msg.chat.id]) {
+            await bookServiceScene(bot, msg)
+          }
+        } else if (msg.text.includes('🧘🏼')) {
+          console.log('Обрано послугу зі списку', msg.text)
+          selectedService[msg.chat.id] = msg.text
+          if (!selectedMaster[msg.chat.id]) {
+            await bookMasterScene(bot, msg)
+          }
+        } else if (msg.text.includes('-')) {
+          handleTimeSelection(bot, msg)
+        } else if (msg.text.includes(':')) {
+          bookingScene(bot, msg)
         }
       } catch (error) { console.log(error) }
       break

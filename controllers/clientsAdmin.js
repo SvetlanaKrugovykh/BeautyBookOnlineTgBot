@@ -83,8 +83,7 @@ async function clientsAdminGetInfo(bot, msg, condition = undefined) {
   let inputLine = ''
   if (msg.text === 'Отримати інформацію про клієнта.' || condition === 'return') {
     await bot.sendMessage(msg.chat.id,
-      'Введіть <i>строку для пошуку інформаціі </i>\nПошукові параметри розділяйте через #, \nпошук ведеться через \nПІБ#город#вул#телефон0981234567#буд#кв\nПриклади: М_дв_д_в або Таран_нко\n(*якщо не впевнені яку буква, то використовуйте _)\n ?2#234\n(*використовуйте ? спочатку запиту, якщо немає прізвища)\n(*якщо ?192.168.1.1# буде пошук за IP адресою)',
-      { parse_mode: 'HTML' })
+      'Введіть <i>строку для пошуку інформаціі </i>', { parse_mode: 'HTML' })
     inputLine = await inputLineScene(bot, msg)
   } else {
     inputLine = msg.text
@@ -95,8 +94,6 @@ async function clientsAdminGetInfo(bot, msg, condition = undefined) {
   }
   try {
     telNumber[msg.chat.id] = responseData.ResponseArray[0].telNumber
-    codeRule[msg.chat.id] = responseData.ResponseArray[0].КодПравил
-    comment[msg.chat.id] = responseData.ResponseArray[0].Comment
 
     if (responseData?.ResponseArray && Array.isArray(responseData?.ResponseArray)) {
       if (responseData?.ResponseArray[0]?.HOST) {

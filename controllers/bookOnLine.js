@@ -32,6 +32,18 @@ async function bookOnLineScene(bot, msg, locationId) {
   }
 }
 
+async function bookingScene(bot, msg) {
+  try {
+    const chatId = msg.chat.id
+
+    await bot.sendMessage(chatId, 'Created order № НФНФ-000283', { parse_mode: 'HTML' })
+
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 async function bookMasterScene(bot, msg) {
   try {
     const chatId = msg.chat.id
@@ -53,7 +65,6 @@ async function bookMasterScene(bot, msg) {
           resize_keyboard: true
         }
       })
-
     } else {
       await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних майстрів. Спробуйте пізніше.')
     }
@@ -73,13 +84,14 @@ async function bookServiceScene(bot, msg) {
         title: 'Оберіть будь ласка послугу',
         options: [{ resize_keyboard: true }],
         buttons: parsedData.map(service => [
-          { text: `${service.name} `, callback_data: `43_${service.id}` }
+          { text: ` 🧘🏼 ${service.name} `, callback_data: `43_${service.id}` }
         ])
       }
       servicesButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
       await bot.sendMessage(chatId, servicesButtons.title, {
         reply_markup: {
-          inline_keyboard: servicesButtons.buttons,
+          //inline_keyboard: servicesButtons.buttons,
+          keyboard: servicesButtons.buttons,
           resize_keyboard: true
         }
       })
@@ -116,4 +128,4 @@ async function bookTimeScene(bot, msg) {
     console.log(err)
   }
 }
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masters, services }
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, selectedLocationId }
