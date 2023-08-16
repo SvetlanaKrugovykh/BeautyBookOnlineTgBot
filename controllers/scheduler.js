@@ -28,10 +28,10 @@ function createAppointmentDateKeyboard() {
     reply_markup: {
       //inline_keyboard: [
       keyboard: [
-        [{ text: '2023-08-11', callback_data: '2023-08-16' }],
-        [{ text: '2023-08-12', callback_data: '2023-08-17' }],
-        [{ text: '2023-08-13', callback_data: '2023-08-18' }],
-        // Add more available dates here...
+        [{ text: '2023-08-17', callback_data: '2023-08-17' }],
+        [{ text: '2023-08-18', callback_data: '2023-08-18' }],
+        [{ text: '2023-08-19', callback_data: '2023-08-19' }],
+        [{ text: '↩', callback_data: '1_33' }]// Add more available dates here...
       ],
     },
   }
@@ -46,7 +46,7 @@ function createAppointmentTimeKeyboard() {
         [{ text: '10:00 AM', callback_data: '10:00' }],
         [{ text: '11:00 AM', callback_data: '11:00' }],
         [{ text: '2:00 PM', callback_data: '14:00' }],
-        // Add more available times here...
+        [{ text: '↩', callback_data: '1_33' }]// Add more available dates here...here...
       ],
     },
   }

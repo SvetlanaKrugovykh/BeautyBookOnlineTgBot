@@ -90,6 +90,13 @@ async function handler(bot, msg, webAppUrl) {
     default:
       console.log(`default: ${msg.text}`)
       try {
+        if (msg.text.includes('🏠')) {
+          await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
+          break
+        } else if (msg.text.includes('↩')) {
+          await bookOnLineScene(bot, msg, false)
+          break
+        }
         if (msg.text.includes('#')) {
           console.log('Обрано майстра зі списку', msg.text)
           selectedMaster[msg.chat.id] = msg.text

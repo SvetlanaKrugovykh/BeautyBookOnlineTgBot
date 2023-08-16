@@ -8,7 +8,7 @@ const buttonsConfig = {
       [{ text: 'Здійснити on-line запис', callback_data: '0_1' }],
       [{ text: 'Надіслати повідомлення', callback_data: '0_2' }],
       [{ text: 'Зареєструватися', callback_data: '0_3' }],
-      [{ text: '↩', callback_data: '0_4' }]
+      [{ text: '🏠', callback_data: '0_4' }]
     ]
   },
 
@@ -55,7 +55,7 @@ const buttonsConfig = {
     buttons: [
       [{ text: 'Отримати інформацію про клієнта', callback_data: '3_1' }],
       [{ text: 'Надіслати відповідь на звернення', callback_data: '3_2' }],
-      [{ text: 'Return', callback_data: '3_3' }]
+      [{ text: '🏠', callback_data: '3_3' }]
     ]
   }
 }

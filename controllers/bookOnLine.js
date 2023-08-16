@@ -84,7 +84,7 @@ async function bookServiceScene(bot, msg) {
         title: 'Оберіть будь ласка послугу',
         options: [{ resize_keyboard: true }],
         buttons: parsedData.map(service => [
-          { text: ` 🧘🏼 ${service.name} `, callback_data: `43_${service.id}` }
+          { text: `○ ${service.name} `, callback_data: `43_${service.id}` }
         ])
       }
       servicesButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
