@@ -1,6 +1,6 @@
 const { buttonsConfig } = require('../modules/keyboard')
 const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = require('./clientsAdmin')
-const { schedullerScene, handleTimeSelection } = require('./scheduler')
+const { schedullerScene, dataTimeeSelection } = require('./scheduler')
 const supportScene = require('./support')
 const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene,
   bookingScene, masterOrServiceOrAnyScene, selectedLocationId } = require('./bookOnLine')
@@ -85,12 +85,13 @@ async function handler(bot, msg, webAppUrl) {
 //#region dynamicKeyboads
 async function switchDynamicSceenes(bot, msg) {
   try {
-    if (/[🏠🕒⬆️↗️➡️↘️⬇️↙️⬅️↖️↩️↪️⤴️⤵️]/.test(msg.text)) goBack(bot, msg)
-    if (msg.text.includes('(')) bookOnLineScene(bot, msg, true)
-    if (msg.text.includes('#')) chooseMaster(bot, msg)
-    if (msg.text.includes('○')) chooseService(bot, msg)
-    if (msg.text.includes('-')) handleTimeSelection(bot, msg)
-    if (msg.text.includes(':')) bookingScene(bot, msg)
+    if (/[🏠⬆️↗️➡️↘️⬇️↙️⬅️↖️↩️↪️⤴️⤵️]/.test(msg.text)) goBack(bot, msg)
+    if (msg.text.includes('(')) await bookOnLineScene(bot, msg, true)
+    if (msg.text.includes('#')) await chooseMaster(bot, msg)
+    if (msg.text.includes('○')) await chooseService(bot, msg)
+    if (msg.text.includes('🕒')) await schedullerScene(bot, msg)
+    //if (msg.text.includes('-')) await handleTimeSelection(bot, msg)
+    //if (msg.text.includes(':')) await bookingScene(bot, msg)
   } catch (error) { console.log(error) }
 }
 
@@ -102,8 +103,6 @@ async function goBack(bot, msg) {
       await bookOnLineScene(bot, msg, false)
     } else if (msg.text.includes('↖️')) {
       await masterOrServiceOrAnyScene(bot, msg)
-    } else if (msg.text.includes('🕒')) {
-      await schedullerScene(bot, msg)
     }
   } catch (error) { console.log(error) }
 }
@@ -126,6 +125,7 @@ async function chooseService(bot, msg) {
     if (!selectedMaster[msg.chat.id]) {
       await bookMasterScene(bot, msg)
     }
+    await dataTimeeSelection(bot, msg, selectedMaster[msg.chat.id], selectedService[msg.chat.id])
   } catch (error) { console.log(error) }
 }
 

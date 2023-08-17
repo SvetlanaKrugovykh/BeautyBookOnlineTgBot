@@ -3,6 +3,7 @@ const sendReqToDB = require('../modules/tlg_to_DB')
 const { buttonsConfig } = require('../modules/keyboard')
 const inputLineScene = require('./inputLine')
 const { getLocationIdByDescr } = require('../data/locations')
+const { selectedMaster, selectedService } = require('./bookOnLine')
 
 const masters = {}
 const services = {}
@@ -147,10 +148,9 @@ async function bookAnyScene(bot, msg) {
 async function bookTimeScene(bot, msg) {
   try {
     const chatId = msg.chat.id
-
-
   } catch (err) {
     console.log(err)
   }
 }
+
 module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, masterOrServiceOrAnyScene, selectedLocationId }

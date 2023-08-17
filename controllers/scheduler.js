@@ -1,6 +1,7 @@
 const sendReqToDB = require('../modules/tlg_to_DB')
 const { buttonsConfig } = require('../modules/keyboard')
 const inputLineScene = require('./inputLine')
+const { text } = require('body-parser')
 
 async function schedullerScene(bot, msg) {
   try {
@@ -12,6 +13,43 @@ async function schedullerScene(bot, msg) {
   }
 }
 
+async function dataTimeeSelection(bot, msg, master, service) {
+  try {
+    if (!master) {
+      console.log("Master is undefined")
+      return null
+    }
+
+    const chatId = msg.chat.id
+    const match = master.match(/^(.*?)\s*#/)
+
+    if (!match) {
+      console.log("Match not found in master")
+      return null
+    }
+
+    const masterName = match[1]
+    const cleanedService = service.replace(/○/g, '')
+
+    const text = `master:${masterName}#service:${cleanedService}`
+    const data = await sendReqToDB('__GetTimeSlots__', msg.chat, text)
+    const parsedData = JSON.parse(data).ResponseArray
+
+    //bot.sendMessage(chatId, 'Найближчі вільний час для обраного фахівця:', createAppointmentTimeKeyboard())
+    const clientChoiceButtons = await dataTimeChoiceFromList(bot, msg, parsedData)
+    await bot.sendMessage(msg.chat.id, clientChoiceButtons.title, {
+      reply_markup: {
+        keyboard: clientChoiceButtons.buttons,
+        resize_keyboard: true
+      }
+    })
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+
 async function handleTimeSelection(bot, msg) {
   try {
     const chatId = msg.chat.id
@@ -20,7 +58,6 @@ async function handleTimeSelection(bot, msg) {
   } catch (err) {
     console.log(err)
   }
-
 }
 
 function createAppointmentDateKeyboard() {
@@ -52,23 +89,17 @@ function createAppointmentTimeKeyboard() {
   }
 }
 
-function dataTimeChoiceFromList(bot, msg, parsedData) {
+
+async function dataTimeChoiceFromList(bot, msg, parsedData) {
   try {
-    const dataTimesValues = parsedData.ResponseArray.map((item, index) => {
-      let value = item['Контрагент']
-      if (item['АдресДом']) {
-        value += '#H' + item['АдресДом']
-        if (item['АдресКвартира']) {
-          value += '#A' + item['АдресКвартира']
-        }
-      }
+    const buttonsPerRow = 2
+    const dataTimeValues = parsedData.map((item, index) => {
       return {
         id: index,
-        value: value,
+        value: item
       }
     })
 
-    const buttonsPerRow = 2
     const dataTimeChoiceButtons = {
       title: 'Оберіть інтервал зі списку:',
       options: [{ resize_keyboard: true }],
@@ -76,8 +107,8 @@ function dataTimeChoiceFromList(bot, msg, parsedData) {
     }
 
     let currentRow = []
-    dataTimesValues.forEach((item) => {
-      const callbackData = `11_${item.id + 1}`
+    dataTimeValues.forEach((item) => {
+      const callbackData = `71_${item.id + 1}`
       const button = { text: item.value, callback_data: callbackData }
       currentRow.push(button)
 
@@ -101,8 +132,7 @@ function dataTimeChoiceFromList(bot, msg, parsedData) {
       dataTimeChoiceButtons.buttons[dataTimeChoiceButtons.buttons.length - 1].push(homeButton)
       dataTimeChoiceButtons.buttons[dataTimeChoiceButtons.buttons.length - 1].push(returnButton)
     } else {
-      dataTimeChoiceButtons.buttons.push([homeButton])
-      dataTimeChoiceButtons.buttons.push([returnButton])
+      dataTimeChoiceButtons.buttons.push([homeButton, returnButton])
     }
 
     return dataTimeChoiceButtons
@@ -111,4 +141,5 @@ function dataTimeChoiceFromList(bot, msg, parsedData) {
   }
 }
 
-module.exports = { schedullerScene, handleTimeSelection }
+
+module.exports = { schedullerScene, handleTimeSelection, dataTimeeSelection }
