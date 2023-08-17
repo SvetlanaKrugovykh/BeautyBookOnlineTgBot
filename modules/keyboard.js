@@ -27,7 +27,7 @@ const buttonsConfig = {
       [{ text: 'Обрати майстра', callback_data: '1_30' }],
       [{ text: 'Обрати послугу', callback_data: '1_31' }],
       [{ text: 'Будь - який вільний фахівець', callback_data: '1_32' }],
-      [{ text: '↩', callback_data: '1_33' }]
+      [{ text: '↩️', callback_data: '1_33' }]
     ]
   },
 
@@ -37,7 +37,7 @@ const buttonsConfig = {
     buttons: [
       [{ text: 'Обрати дату і час', callback_data: '1_40' }],
       [{ text: 'Обрати послугу', callback_data: '1_41' }],
-      [{ text: '↩', callback_data: '1_33' }]
+      [{ text: '↖️', callback_data: '1_37' }]
     ]
   },
 

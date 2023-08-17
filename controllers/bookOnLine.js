@@ -2,10 +2,11 @@
 const sendReqToDB = require('../modules/tlg_to_DB')
 const { buttonsConfig } = require('../modules/keyboard')
 const inputLineScene = require('./inputLine')
+const { getLocationIdByDescr } = require('../data/locations')
 
-const selectedLocationId = {}
 const masters = {}
 const services = {}
+const selectedLocationId = {}
 
 async function bookOnLineScene(bot, msg, locationId) {
   try {
@@ -18,19 +19,35 @@ async function bookOnLineScene(bot, msg, locationId) {
     })
 
     if (locationId !== false) {
-      selectedLocationId[chatId] = locationId
-      await bot.sendMessage(chatId, buttonsConfig["masterOrServiceButtons"].title, {
-        reply_markup: {
-          keyboard: buttonsConfig["masterOrServiceButtons"].buttons,
-          resize_keyboard: true
-        }
-      })
+      const id = getLocationIdByDescr(msg.text)
+      if (id !== null) {
+        selectedLocationId[chatId] = `1_${id}`
+        console.log(`Location ID is: 1_${id}`)
+        masterOrServiceOrAnyScene(bot, msg)
+      }
     }
 
   } catch (err) {
     console.log(err)
   }
 }
+
+async function masterOrServiceOrAnyScene(bot, msg) {
+  try {
+    const chatId = msg.chat.id
+
+    await bot.sendMessage(chatId, buttonsConfig["masterOrServiceButtons"].title, {
+      reply_markup: {
+        keyboard: buttonsConfig["masterOrServiceButtons"].buttons,
+        resize_keyboard: true
+      }
+    })
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 
 async function bookingScene(bot, msg) {
   try {
@@ -58,7 +75,7 @@ async function bookMasterScene(bot, msg) {
           { text: `${master.name} #${master.jobTitle} `, callback_data: `33_${master.id}` }
         ])
       }
-      mastersButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
+      mastersButtons.buttons.push([{ text: '↖️', callback_data: '1_33' }])
       await bot.sendMessage(chatId, mastersButtons.title, {
         reply_markup: {
           keyboard: mastersButtons.buttons,
@@ -87,7 +104,7 @@ async function bookServiceScene(bot, msg) {
           { text: `○ ${service.name} `, callback_data: `43_${service.id}` }
         ])
       }
-      servicesButtons.buttons.push([{ text: '↩', callback_data: '1_33' }])
+      servicesButtons.buttons.push([{ text: '↖️', callback_data: '1_33' }])
       await bot.sendMessage(chatId, servicesButtons.title, {
         reply_markup: {
           //inline_keyboard: servicesButtons.buttons,
@@ -128,4 +145,4 @@ async function bookTimeScene(bot, msg) {
     console.log(err)
   }
 }
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, selectedLocationId }
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, masterOrServiceOrAnyScene, selectedLocationId }
