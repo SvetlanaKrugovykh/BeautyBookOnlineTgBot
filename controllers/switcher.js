@@ -50,6 +50,9 @@ async function handler(bot, msg, webAppUrl) {
     case '1_33':
       await bookOnLineScene(bot, msg, false)
       break
+    case '1_34':
+      await schedullerScene(bot, msg)
+      break
     case '1_37':
       await masterOrServiceOrAnyScene(bot, msg)
       break
@@ -82,7 +85,7 @@ async function handler(bot, msg, webAppUrl) {
 //#region dynamicKeyboads
 async function switchDynamicSceenes(bot, msg) {
   try {
-    if (/[🏠⬆️↗️➡️↘️⬇️↙️⬅️↖️↩️↪️⤴️⤵️]/.test(msg.text)) goBack(bot, msg)
+    if (/[🏠🕒⬆️↗️➡️↘️⬇️↙️⬅️↖️↩️↪️⤴️⤵️]/.test(msg.text)) goBack(bot, msg)
     if (msg.text.includes('(')) bookOnLineScene(bot, msg, true)
     if (msg.text.includes('#')) chooseMaster(bot, msg)
     if (msg.text.includes('○')) chooseService(bot, msg)
@@ -99,6 +102,8 @@ async function goBack(bot, msg) {
       await bookOnLineScene(bot, msg, false)
     } else if (msg.text.includes('↖️')) {
       await masterOrServiceOrAnyScene(bot, msg)
+    } else if (msg.text.includes('🕒')) {
+      await schedullerScene(bot, msg)
     }
   } catch (error) { console.log(error) }
 }

@@ -22,11 +22,10 @@ const buttonsConfig = {
 
   masterOrServiceButtons: {
     title: 'Оберіть будь ласка майстра або послугу',
-    options: [{ resize_keyboard: true }],
+    options: { resize_keyboard: true },
     buttons: [
-      [{ text: 'Обрати майстра', callback_data: '1_30' }],
-      [{ text: 'Обрати послугу', callback_data: '1_31' }],
-      [{ text: 'Будь - який вільний фахівець', callback_data: '1_32' }],
+      [{ text: 'Обрати майстра', callback_data: '1_30' }, { text: 'Обрати послугу', callback_data: '1_31' }],
+      [{ text: '🕒 Обрати час', callback_data: '1_34' }, { text: 'Будь - який вільний фахівець', callback_data: '1_32' }],
       [{ text: '↩️', callback_data: '1_33' }]
     ]
   },

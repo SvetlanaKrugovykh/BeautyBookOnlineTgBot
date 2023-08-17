@@ -83,7 +83,11 @@ async function bookMasterScene(bot, msg) {
         }
       })
     } else {
-      await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних майстрів. Спробуйте пізніше.')
+      if (selectedLocationId[chatId]) {
+        await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних майстрів. Спробуйте пізніше.')
+      } else {
+        await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
+      }
     }
   } catch (err) {
     console.log(err)
@@ -114,7 +118,11 @@ async function bookServiceScene(bot, msg) {
       })
 
     } else {
-      await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних послуг. Оберіть іншу локацію.')
+      if (selectedLocationId[chatId]) {
+        await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних послуг. Оберіть іншу локацію.')
+      } else {
+        await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
+      }
     }
   } catch (err) {
     console.log(err)
