@@ -13,16 +13,18 @@ async function schedullerScene(bot, msg) {
   }
 }
 
-async function dataTimeeSelection(bot, msg, master, service) {
+async function dataTimeeSelection(bot, msg, selectedByUser) {
   try {
+    //TODO dor many services
+    const chatId = msg.chat.id
+    const master = selectedByUser[chatId].Masters[0]
+    const service = selectedByUser[chatId].Services[0]
     if (!master) {
       console.log("Master is undefined")
       return null
     }
 
-    const chatId = msg.chat.id
     const match = master.match(/^(.*?)\s*#/)
-
     if (!match) {
       console.log("Match not found in master")
       return null
@@ -123,7 +125,7 @@ async function dataTimeChoiceFromList(bot, msg, parsedData) {
     }
 
     const returnButton = { text: '↖️', callback_data: '1_37' }
-    const homeButton = { text: '🏠', callback_data: '1_33' }
+    const homeButton = { text: '🏠', callback_data: '0_1' }
 
     if (
       dataTimeChoiceButtons.buttons.length > 0 &&

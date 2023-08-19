@@ -2,14 +2,9 @@
 const sendReqToDB = require('../modules/tlg_to_DB')
 const { buttonsConfig } = require('../modules/keyboard')
 const inputLineScene = require('./inputLine')
-const { getLocationIdByDescr } = require('../data/locations')
-const { selectedMaster, selectedService } = require('./bookOnLine')
 
-const masters = {}
-const services = {}
-const selectedLocationId = {}
-
-async function bookOnLineScene(bot, msg, locationId) {
+//#region staticKeyboad
+async function bookOnLineScene(bot, msg) {
   try {
     const chatId = msg.chat.id
     await bot.sendMessage(chatId, buttonsConfig["locationsButtons"].title, {
@@ -18,16 +13,6 @@ async function bookOnLineScene(bot, msg, locationId) {
         resize_keyboard: true
       }
     })
-
-    if (locationId !== false) {
-      const id = getLocationIdByDescr(msg.text)
-      if (id !== null) {
-        selectedLocationId[chatId] = `1_${id}`
-        console.log(`Location ID is: 1_${id}`)
-        masterOrServiceOrAnyScene(bot, msg)
-      }
-    }
-
   } catch (err) {
     console.log(err)
   }
@@ -48,7 +33,7 @@ async function masterOrServiceOrAnyScene(bot, msg) {
     console.log(err)
   }
 }
-
+//#endregion
 
 async function bookingScene(bot, msg) {
   try {
@@ -62,12 +47,12 @@ async function bookingScene(bot, msg) {
   }
 }
 
-async function bookMasterScene(bot, msg) {
+async function bookMasterScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
-    const data = await sendReqToDB('__GetMasters__', msg.chat, selectedLocationId[chatId])
+    const location_id = selectedByUser[chatId].location_id
+    const data = await sendReqToDB('__GetMasters__', msg.chat, location_id)
     const parsedData = JSON.parse(data).ResponseArray
-    masters[chatId] = parsedData
     if (parsedData.length !== 0 && parsedData[0] !== null && parsedData[0] !== 'nothing found') {
       const mastersButtons = {
         title: 'Оберіть будь ласка майстра',
@@ -76,7 +61,7 @@ async function bookMasterScene(bot, msg) {
           { text: `${master.name} #${master.jobTitle} `, callback_data: `33_${master.id}` }
         ])
       }
-      mastersButtons.buttons.push([{ text: '↖️', callback_data: '1_33' }])
+      mastersButtons.buttons.push([{ text: '↖️', callback_data: '0_1' }])
       await bot.sendMessage(chatId, mastersButtons.title, {
         reply_markup: {
           keyboard: mastersButtons.buttons,
@@ -84,7 +69,7 @@ async function bookMasterScene(bot, msg) {
         }
       })
     } else {
-      if (selectedLocationId[chatId]) {
+      if (location_id) {
         await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних майстрів. Спробуйте пізніше.')
       } else {
         await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
@@ -95,12 +80,16 @@ async function bookMasterScene(bot, msg) {
   }
 }
 
-async function bookServiceScene(bot, msg) {
+async function bookServiceScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
-    const data = await sendReqToDB('__GetServices__', msg.chat, selectedLocationId[chatId])
+    if (!selectedByUser[chatId].location_id) {
+      await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
+      return
+    }
+    const location_id = selectedByUser[chatId].location_id
+    const data = await sendReqToDB('__GetServices__', msg.chat, location_id)
     const parsedData = JSON.parse(data).ResponseArray
-    services[chatId] = parsedData
     if (parsedData.length !== 0 && parsedData[0] !== null && parsedData[0] !== 'nothing found') {
       const servicesButtons = {
         title: 'Оберіть будь ласка послугу',
@@ -109,7 +98,7 @@ async function bookServiceScene(bot, msg) {
           { text: `○ ${service.name} `, callback_data: `43_${service.id}` }
         ])
       }
-      servicesButtons.buttons.push([{ text: '↖️', callback_data: '1_33' }])
+      servicesButtons.buttons.push([{ text: '↖️', callback_data: '0_1' }])
       await bot.sendMessage(chatId, servicesButtons.title, {
         reply_markup: {
           //inline_keyboard: servicesButtons.buttons,
@@ -117,20 +106,16 @@ async function bookServiceScene(bot, msg) {
           resize_keyboard: true
         }
       })
-
     } else {
-      if (selectedLocationId[chatId]) {
-        await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних послуг. Оберіть іншу локацію.')
-      } else {
-        await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
-      }
+      await bot.sendMessage(chatId, 'На жаль, на даний момент немає доступних послуг. Спробуйте пізніше.')
     }
+
   } catch (err) {
     console.log(err)
   }
 }
 
-async function bookAnyScene(bot, msg) {
+async function bookAnyScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
     await bot.sendMessage(msg.chat.id, buttonsConfig["anyChoiceButtons"].title, {
@@ -145,7 +130,7 @@ async function bookAnyScene(bot, msg) {
   }
 }
 
-async function bookTimeScene(bot, msg) {
+async function bookTimeScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
   } catch (err) {
@@ -153,4 +138,4 @@ async function bookTimeScene(bot, msg) {
   }
 }
 
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, masterOrServiceOrAnyScene, selectedLocationId }
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, masterOrServiceOrAnyScene }

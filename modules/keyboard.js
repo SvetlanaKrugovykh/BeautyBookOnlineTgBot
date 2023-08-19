@@ -7,7 +7,7 @@ const buttonsConfig = {
     buttons: [
       [{ text: 'Здійснити on-line запис', callback_data: '0_1' }],
       [{ text: 'Надіслати повідомлення', callback_data: '0_2' }],
-      [{ text: 'Зареєструватися', callback_data: '0_3' }],
+      //      [{ text: 'Зареєструватися', callback_data: '0_3' }],
       [{ text: '🏠', callback_data: '0_4' }]
     ]
   },
@@ -26,16 +26,16 @@ const buttonsConfig = {
     buttons: [
       [{ text: 'Обрати майстра', callback_data: '1_30' }, { text: 'Обрати послугу', callback_data: '1_31' }],
       [{ text: '🕒 Обрати час', callback_data: '1_34' }, { text: 'Будь - який вільний фахівець', callback_data: '1_32' }],
-      [{ text: '↩️', callback_data: '1_33' }]
+      [{ text: '↩️', callback_data: '0_1' }]
     ]
   },
 
   anyChoiceButtons: {
     title: 'Будь-який вільний фахівець',
-    options: [{ resize_keyboard: true }],
+    options: { resize_keyboard: true },
     buttons: [
-      [{ text: 'Обрати дату і час', callback_data: '1_40' }],
-      [{ text: 'Обрати послугу', callback_data: '1_41' }],
+      [{ text: '🕒 Обрати час', callback_data: '1_34' }],
+      [{ text: 'Обрати послугу', callback_data: '1_31' }],
       [{ text: '↖️', callback_data: '1_37' }]
     ]
   },

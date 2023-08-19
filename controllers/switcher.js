@@ -1,12 +1,13 @@
 const { buttonsConfig } = require('../modules/keyboard')
+const { getLocationIdByDescr } = require('../data/locations')
 const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = require('./clientsAdmin')
 const { schedullerScene, dataTimeeSelection } = require('./scheduler')
 const supportScene = require('./support')
 const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene,
-  bookingScene, masterOrServiceOrAnyScene, selectedLocationId } = require('./bookOnLine')
+  masterOrServiceOrAnyScene } = require('./bookOnLine')
 const signUpForm = require('./signUp').signUpForm
-const selectedMaster = {}
-const selectedService = {}
+
+const selectedByUser = {} // {chatId: {location_id: '1_1', selectedMasters: 'Майстер 1', selectedServices: 'Послуга 1'}}
 
 //#region staticKeyboad
 function getCallbackData(text) {
@@ -39,7 +40,7 @@ async function handler(bot, msg, webAppUrl) {
       await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
       break
     case '1_30':
-      await bookMasterScene(bot, msg)
+      await bookMasterScene(bot, msg, selectedByUser)
       break
     case '1_31':
       await bookServiceScene(bot, msg)
@@ -47,20 +48,11 @@ async function handler(bot, msg, webAppUrl) {
     case '1_32':
       await bookAnyScene(bot, msg)
       break
-    case '1_33':
-      await bookOnLineScene(bot, msg, false)
-      break
     case '1_34':
       await schedullerScene(bot, msg)
       break
     case '1_37':
       await masterOrServiceOrAnyScene(bot, msg)
-      break
-    case '1_40':
-      await schedullerScene(bot, msg)
-      break
-    case '1_41':
-      await bookServiceScene(bot, msg)
       break
     case '2_1':
       await clientsAdmin(bot, msg)
@@ -85,13 +77,35 @@ async function handler(bot, msg, webAppUrl) {
 //#region dynamicKeyboads
 async function switchDynamicSceenes(bot, msg) {
   try {
-    if (/[🏠⬆️↗️➡️↘️⬇️↙️⬅️↖️↩️↪️⤴️⤵️]/.test(msg.text)) goBack(bot, msg)
-    if (msg.text.includes('(')) await bookOnLineScene(bot, msg, true)
-    if (msg.text.includes('#')) await chooseMaster(bot, msg)
-    if (msg.text.includes('○')) await chooseService(bot, msg)
-    if (msg.text.includes('🕒')) await schedullerScene(bot, msg)
-    //if (msg.text.includes('-')) await handleTimeSelection(bot, msg)
-    //if (msg.text.includes(':')) await bookingScene(bot, msg)
+    if (/[🏠⬆️↗️➡️↘️⬇️↙️⬅️↖️↩️↪️⤴️⤵️]/.test(msg.text)) {
+      goBack(bot, msg)
+      return
+    }
+    if (msg.text.includes('(')) {
+      const id = getLocationIdByDescr(msg.text)
+      if (id !== null) {
+        const location_id = `1_${id}`
+        if (!selectedByUser[msg.chat.id]) {
+          selectedByUser[msg.chat.id] = {}
+        }
+        selectedByUser[msg.chat.id].location_id = location_id
+        console.log(`Location ID is: 1_${id}`)
+        await masterOrServiceOrAnyScene(bot, msg)
+      }
+      return
+    }
+    if (msg.text.includes('#')) {
+      await chooseMaster(bot, msg)
+      return
+    }
+    if (msg.text.includes('○')) {
+      await chooseService(bot, msg)
+      return
+    }
+    if (msg.text.includes('🕒')) {
+      await schedullerScene(bot, msg)
+      return
+    }
   } catch (error) { console.log(error) }
 }
 
@@ -100,7 +114,10 @@ async function goBack(bot, msg) {
     if (msg.text.includes('🏠')) {
       await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
     } else if (msg.text.includes('↩️')) {
-      await bookOnLineScene(bot, msg, false)
+      const location_id = await bookOnLineScene(bot, msg)
+      if (location_id) {
+        selectedByUser[msg.chat.id].location_id = location_id
+      }
     } else if (msg.text.includes('↖️')) {
       await masterOrServiceOrAnyScene(bot, msg)
     }
@@ -110,10 +127,12 @@ async function goBack(bot, msg) {
 async function chooseMaster(bot, msg) {
   try {
     console.log('Обрано майстра зі списку', msg.text)
-    selectedMaster[msg.chat.id] = msg.text
+    if (!selectedByUser[msg.chat.id]) selectedByUser[msg.chat.id] = {}
+    if (!selectedByUser[msg.chat.id].Masters) selectedByUser[msg.chat.id].Masters = []
+    selectedByUser[msg.chat.id].Masters.push(msg.text)
     await bot.sendMessage(msg.chat.id, `Обрано майстра ${msg.text}`)
-    if (!selectedService[msg.chat.id]) {
-      await bookServiceScene(bot, msg)
+    if (!selectedByUser[msg.chat.id].Services) {
+      await bookServiceScene(bot, msg, selectedByUser)
     }
   } catch (error) { console.log(error) }
 }
@@ -121,11 +140,13 @@ async function chooseMaster(bot, msg) {
 async function chooseService(bot, msg) {
   try {
     console.log('Обрано послугу зі списку', msg.text)
-    selectedService[msg.chat.id] = msg.text
-    if (!selectedMaster[msg.chat.id]) {
-      await bookMasterScene(bot, msg)
+    if (!selectedByUser[msg.chat.id]) selectedByUser[msg.chat.id] = {}
+    if (!selectedByUser[msg.chat.id].Services) selectedByUser[msg.chat.id].Services = []
+    selectedByUser[msg.chat.id].Services.push(msg.text)
+    if (!selectedByUser[msg.chat.id].Masters) {
+      await bookMasterScene(bot, msg, selectedByUser)
     }
-    await dataTimeeSelection(bot, msg, selectedMaster[msg.chat.id], selectedService[msg.chat.id])
+    await dataTimeeSelection(bot, msg, selectedByUser)
   } catch (error) { console.log(error) }
 }
 
