@@ -28,7 +28,7 @@ async function handler(bot, msg, webAppUrl) {
   console.log('The choise is:', data)
   switch (data) {
     case '0_1':
-      await bookOnLineScene(bot, msg, false)
+      await bookOnLineScene(bot, msg)
       break
     case '0_2':
       await supportScene(bot, msg, false)

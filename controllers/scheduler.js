@@ -94,7 +94,7 @@ function createAppointmentTimeKeyboard() {
 
 async function dataTimeChoiceFromList(bot, msg, parsedData) {
   try {
-    const buttonsPerRow = 2
+    const buttonsPerRow = 4
     const dataTimeValues = parsedData.map((item, index) => {
       return {
         id: index,
