@@ -5,6 +5,7 @@ const { schedullerScene, dataTimeeSelection } = require('./scheduler')
 const supportScene = require('./support')
 const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene,
   masterOrServiceOrAnyScene } = require('./bookOnLine')
+const { createOrder } = require('./orders')
 const signUpForm = require('./signUp').signUpForm
 
 const selectedByUser = {} // {chatId: {location_id: '1_1', Masters: ['Майстер 1'], Services: ['Послуга 1']}}
@@ -93,6 +94,10 @@ async function switchDynamicSceenes(bot, msg) {
       await chooseService(bot, msg)
       return
     }
+    if (msg.text.includes(':')) {
+      await createOrder(bot, msg, selectedByUser)
+      return
+    }
     if (msg.text.includes('🕒')) {
       await schedullerScene(bot, msg)
       return
@@ -150,9 +155,11 @@ async function chooseService(bot, msg) {
     if (!selectedByUser[msg.chat.id].Masters) {
       await bookMasterScene(bot, msg, selectedByUser)
     }
+    bot.sendMessage(msg.chat.id, 'Найближчі вільний час для обраного фахівця:', { parse_mode: "HTML" })
     await dataTimeeSelection(bot, msg, selectedByUser)
   } catch (error) { console.log(error) }
 }
+
 
 //#endregion
 

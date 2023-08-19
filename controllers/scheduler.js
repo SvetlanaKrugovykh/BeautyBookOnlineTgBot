@@ -32,12 +32,12 @@ async function dataTimeeSelection(bot, msg, selectedByUser) {
 
     const masterName = match[1]
     const cleanedService = service.replace(/○/g, '')
-
-    const text = `master:${masterName}#service:${cleanedService}`
+    const datastr = new Date().toISOString().slice(0, 10)
+    const withoutHyphens = datastr.replace(/-/g, '')
+    const interval = process.env.TIME_SLOT_SEARCHNIG_INTERVAL || 5
+    const text = `master:${masterName};#service:${cleanedService};#date:${withoutHyphens};#interval:${interval}`
     const data = await sendReqToDB('__GetTimeSlots__', msg.chat, text)
     const parsedData = JSON.parse(data).ResponseArray
-
-    //bot.sendMessage(chatId, 'Найближчі вільний час для обраного фахівця:', createAppointmentTimeKeyboard())
     const clientChoiceButtons = await dataTimeChoiceFromList(bot, msg, parsedData)
     await bot.sendMessage(msg.chat.id, clientChoiceButtons.title, {
       reply_markup: {
@@ -91,10 +91,9 @@ function createAppointmentTimeKeyboard() {
   }
 }
 
-
 async function dataTimeChoiceFromList(bot, msg, parsedData) {
   try {
-    const buttonsPerRow = 4
+    const buttonsPerRow = 3
     const dataTimeValues = parsedData.map((item, index) => {
       return {
         id: index,

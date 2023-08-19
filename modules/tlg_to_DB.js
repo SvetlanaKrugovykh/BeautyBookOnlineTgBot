@@ -48,6 +48,8 @@ function objToString(reqType, data, text) {
       return (text)
     case '__GetTimeSlots__':
       return (text)
+    case '__CreateOrder__':
+      return (text)
     case '___UserRegistration__':
       return (text + '#' + data?.email + '#' + data?.phoneNumber + '#' + data?.password + '#' + data?.PIB + '#' + data?.contract + '#' + data?.address + '#' + text)
     default:
