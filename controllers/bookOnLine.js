@@ -21,7 +21,6 @@ async function bookOnLineScene(bot, msg) {
 async function masterOrServiceOrAnyScene(bot, msg) {
   try {
     const chatId = msg.chat.id
-
     await bot.sendMessage(chatId, buttonsConfig["masterOrServiceButtons"].title, {
       reply_markup: {
         keyboard: buttonsConfig["masterOrServiceButtons"].buttons,
@@ -50,6 +49,10 @@ async function bookingScene(bot, msg) {
 async function bookMasterScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
+    if (selectedByUser === undefined || !selectedByUser[chatId]?.location_id) {
+      await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
+      return
+    }
     const location_id = selectedByUser[chatId].location_id
     const data = await sendReqToDB('__GetMasters__', msg.chat, location_id)
     const parsedData = JSON.parse(data).ResponseArray
@@ -83,7 +86,7 @@ async function bookMasterScene(bot, msg, selectedByUser) {
 async function bookServiceScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
-    if (!selectedByUser[chatId].location_id) {
+    if (selectedByUser === undefined || !selectedByUser[chatId]?.location_id) {
       await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
       return
     }
@@ -118,6 +121,10 @@ async function bookServiceScene(bot, msg, selectedByUser) {
 async function bookAnyScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
+    if (selectedByUser === undefined || !selectedByUser[chatId]?.location_id) {
+      await bot.sendMessage(chatId, 'Оберіть будь ласка локацію')
+      return
+    }
     await bot.sendMessage(msg.chat.id, buttonsConfig["anyChoiceButtons"].title, {
       reply_markup: {
         keyboard: buttonsConfig["anyChoiceButtons"].buttons,

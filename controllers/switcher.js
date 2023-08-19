@@ -7,7 +7,7 @@ const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene,
   masterOrServiceOrAnyScene } = require('./bookOnLine')
 const signUpForm = require('./signUp').signUpForm
 
-const selectedByUser = {} // {chatId: {location_id: '1_1', selectedMasters: 'Майстер 1', selectedServices: 'Послуга 1'}}
+const selectedByUser = {} // {chatId: {location_id: '1_1', Masters: ['Майстер 1'], Services: ['Послуга 1']}}
 
 //#region staticKeyboad
 function getCallbackData(text) {
@@ -82,16 +82,7 @@ async function switchDynamicSceenes(bot, msg) {
       return
     }
     if (msg.text.includes('(')) {
-      const id = getLocationIdByDescr(msg.text)
-      if (id !== null) {
-        const location_id = `1_${id}`
-        if (!selectedByUser[msg.chat.id]) {
-          selectedByUser[msg.chat.id] = {}
-        }
-        selectedByUser[msg.chat.id].location_id = location_id
-        console.log(`Location ID is: 1_${id}`)
-        await masterOrServiceOrAnyScene(bot, msg)
-      }
+      await chooseLocation(bot, msg)
       return
     }
     if (msg.text.includes('#')) {
@@ -114,11 +105,24 @@ async function goBack(bot, msg) {
     if (msg.text.includes('🏠')) {
       await guestMenu(bot, msg, buttonsConfig["guestStartButtons"])
     } else if (msg.text.includes('↩️')) {
-      const location_id = await bookOnLineScene(bot, msg)
-      if (location_id) {
-        selectedByUser[msg.chat.id].location_id = location_id
-      }
+      await bookOnLineScene(bot, msg)
     } else if (msg.text.includes('↖️')) {
+      await masterOrServiceOrAnyScene(bot, msg)
+    }
+  } catch (error) { console.log(error) }
+}
+
+async function chooseLocation(bot, msg) {
+  try {
+    console.log('Обрано локацію:', msg.text)
+    const id = getLocationIdByDescr(msg.text)
+    if (id !== null) {
+      const location_id = `1_${id}`
+      if (!selectedByUser[msg.chat.id]) {
+        selectedByUser[msg.chat.id] = {}
+      }
+      selectedByUser[msg.chat.id].location_id = location_id
+      console.log(`Location ID is: 1_${id}`)
       await masterOrServiceOrAnyScene(bot, msg)
     }
   } catch (error) { console.log(error) }
