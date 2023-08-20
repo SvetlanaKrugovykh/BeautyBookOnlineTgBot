@@ -34,18 +34,6 @@ async function masterOrServiceOrAnyScene(bot, msg) {
 }
 //#endregion
 
-async function bookingScene(bot, msg) {
-  try {
-    const chatId = msg.chat.id
-
-    await bot.sendMessage(chatId, 'Created order № НФНФ-000283', { parse_mode: 'HTML' })
-
-
-  } catch (err) {
-    console.log(err)
-  }
-}
-
 async function bookMasterScene(bot, msg, selectedByUser) {
   try {
     const chatId = msg.chat.id
@@ -145,4 +133,4 @@ async function bookTimeScene(bot, msg, selectedByUser) {
   }
 }
 
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, bookingScene, masterOrServiceOrAnyScene }
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masterOrServiceOrAnyScene }

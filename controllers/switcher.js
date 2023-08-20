@@ -26,9 +26,11 @@ function getCallbackData(text) {
 
 async function handler(bot, msg, webAppUrl) {
   const data = getCallbackData(msg.text)
+  if (!selectedByUser[msg.chat.id]) selectedByUser[msg.chat.id] = {}
   console.log('The choise is:', data)
   switch (data) {
     case '0_1':
+      selectedByUser[msg.chat.id] = {}
       await bookOnLineScene(bot, msg)
       break
     case '0_2':
@@ -44,10 +46,10 @@ async function handler(bot, msg, webAppUrl) {
       await bookMasterScene(bot, msg, selectedByUser)
       break
     case '1_31':
-      await bookServiceScene(bot, msg)
+      await bookServiceScene(bot, msg, selectedByUser)
       break
     case '1_32':
-      await bookAnyScene(bot, msg)
+      await bookAnyScene(bot, msg, selectedByUser)
       break
     case '1_34':
       await schedullerScene(bot, msg)
@@ -123,9 +125,6 @@ async function chooseLocation(bot, msg) {
     const id = getLocationIdByDescr(msg.text)
     if (id !== null) {
       const location_id = `1_${id}`
-      if (!selectedByUser[msg.chat.id]) {
-        selectedByUser[msg.chat.id] = {}
-      }
       selectedByUser[msg.chat.id].location_id = location_id
       console.log(`Location ID is: 1_${id}`)
       await masterOrServiceOrAnyScene(bot, msg)

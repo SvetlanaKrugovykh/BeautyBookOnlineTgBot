@@ -17,7 +17,7 @@ async function dataTimeeSelection(bot, msg, selectedByUser) {
   try {
     //TODO dor many services
     const chatId = msg.chat.id
-    const master = selectedByUser[chatId].Masters[0]
+    const master = selectedByUser[chatId].Masters[0]  //TODO need to fix if no masters
     const service = selectedByUser[chatId].Services[0]
     if (!master) {
       console.log("Master is undefined")
