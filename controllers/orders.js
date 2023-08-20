@@ -1,4 +1,5 @@
 const sendReqToDB = require('../modules/tlg_to_DB')
+const inputLineScene = require('./inputLine')
 
 async function createOrder(bot, msg, selectedByUser) {
   try {
@@ -19,16 +20,31 @@ async function createOrder(bot, msg, selectedByUser) {
     }
     const masterName = match[1]
     const cleanedService = service.replace(/○/g, '')
-    const text = `masters:${masterName};#services:${cleanedService};#date:${datastr}`
+    await bot.sendMessage(chatId, "Введіть <i>номер телефону </i> в форматі 0671234567\n", { parse_mode: "HTML" })
+    let userInput = await inputLineScene(bot, msg)
+    let phoneNumber = userInput.replace(/[^0-9]/g, "")
+    if (phoneNumber.length < 8 || phoneNumber.length > 12) {
+      await bot.sendMessage(chatId, "Номер телефону введено некоректно, будь ласка, спробуйте ще раз\n")
+      userInput = await inputLineScene(bot, msg)
+      phoneNumber = userInput.replace(/[^0-9]/g, "")
+    }
+    if (phoneNumber.length < 8 || phoneNumber.length > 12) {
+      await bot.sendMessage(chatId, "Номер телефону введено некоректно вдруге, оформлення заказу є неможливим\n")
+      return null
+    }
+    await bot.sendMessage(chatId, "Введіть, будь ласка <i>своє ім'я та бажано прізвище</i>\n", { parse_mode: "HTML" })
+    const name = await inputLineScene(bot, msg)
+    let text = `name:${name}#phoneNumber:${phoneNumber}#masters:${masterName};#services:${cleanedService};#date:${datastr}`
     const data = await sendReqToDB('__CreateOrder__', msg.chat, text)
     const parsedData = JSON.parse(data).ResponseArray
-    const clientChoiceButtons = await dataTimeChoiceFromList(bot, msg, parsedData)
-    await bot.sendMessage(msg.chat.id, clientChoiceButtons.title, {
-      reply_markup: {
-        keyboard: clientChoiceButtons.buttons,
-        resize_keyboard: true
-      }
-    })
+    if (parsedData.toString().includes('Created order №')) {
+      const answer = 'Ваше замовлення підтвержено'
+      text = `${answer}\n Очікуйте на смс щодо підтверження запису\n Майстер ${masterName} \n Послуга ${cleanedService} \n Дата/час ${datastr}`
+    }
+    else {
+      text = 'Під час формування замовлення щось пішло не так. Повторіть спробу запису ще раз'
+    }
+    await bot.sendMessage(chatId, text, { parse_mode: "HTML" })
   } catch (err) {
     console.log(err)
   }
