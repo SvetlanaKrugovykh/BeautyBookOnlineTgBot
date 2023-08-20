@@ -51,46 +51,6 @@ async function dataTimeeSelection(bot, msg, selectedByUser) {
   }
 }
 
-
-async function handleTimeSelection(bot, msg) {
-  try {
-    const chatId = msg.chat.id
-    bot.sendMessage(chatId, 'Найближчі вільний час для обраного фахівця:', createAppointmentTimeKeyboard())
-
-  } catch (err) {
-    console.log(err)
-  }
-}
-
-function createAppointmentDateKeyboard() {
-  return {
-    reply_markup: {
-      //inline_keyboard: [
-      keyboard: [
-        [{ text: '2023-08-17', callback_data: '2023-08-17' }],
-        [{ text: '2023-08-18', callback_data: '2023-08-18' }],
-        [{ text: '2023-08-19', callback_data: '2023-08-19' }],
-        [{ text: '↖️', callback_data: '1_37' }]// Add more available dates here...
-      ],
-    },
-  }
-}
-
-// Helper function to create a keyboard with available appointment times
-function createAppointmentTimeKeyboard() {
-  return {
-    reply_markup: {
-      //inline_keyboard: [
-      keyboard: [
-        [{ text: '10:00 AM', callback_data: '10:00' }],
-        [{ text: '11:00 AM', callback_data: '11:00' }],
-        [{ text: '2:00 PM', callback_data: '14:00' }],
-        [{ text: '↖️', callback_data: '1_37' }]// Add more available dates here...here...
-      ],
-    },
-  }
-}
-
 async function dataTimeChoiceFromList(bot, msg, parsedData) {
   try {
     const buttonsPerRow = 3
@@ -143,4 +103,4 @@ async function dataTimeChoiceFromList(bot, msg, parsedData) {
 }
 
 
-module.exports = { schedullerScene, handleTimeSelection, dataTimeeSelection }
+module.exports = { schedullerScene, dataTimeeSelection }

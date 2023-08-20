@@ -35,7 +35,7 @@ async function createOrder(bot, msg, selectedByUser) {
     }
     await bot.sendMessage(chatId, "Введіть, будь ласка <i>своє ім'я та бажано прізвище</i>\n", { parse_mode: "HTML" })
     const name = await inputLineScene(bot, msg)
-    let text = `name:${name}#phoneNumber:${phoneNumber}#masters:${masterName};#services:${cleanedService};#date:${datastr}`
+    let text = `name:${name}#phoneNumber:${phoneNumber}#masters:${masterName};#services:${cleanedService};#date:${datastr}#tg_chatId:${chatId}`
     const data = await sendReqToDB('__CreateOrder__', msg.chat, text)
     const parsedData = JSON.parse(data).ResponseArray
     if (parsedData.toString().includes('Created order №')) {
