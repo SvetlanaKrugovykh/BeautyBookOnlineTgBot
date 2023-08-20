@@ -1,5 +1,6 @@
 const sendReqToDB = require('../modules/tlg_to_DB')
 const inputLineScene = require('./inputLine')
+const { send_sms } = require('../modules/smser')
 
 async function createOrder(bot, msg, selectedByUser) {
   try {
@@ -40,6 +41,7 @@ async function createOrder(bot, msg, selectedByUser) {
     if (parsedData.toString().includes('Created order №')) {
       const answer = 'Ваше замовлення підтвержено'
       text = `${answer}\n Очікуйте на смс щодо підтверження запису\n Майстер ${masterName} \n Послуга ${cleanedService} \n Дата/час ${datastr}`
+      await send_sms(phoneNumber, text)
     }
     else {
       text = 'Під час формування замовлення щось пішло не так. Повторіть спробу запису ще раз'
