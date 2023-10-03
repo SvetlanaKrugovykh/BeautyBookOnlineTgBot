@@ -1,7 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api')
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
+const Fastify = require('fastify')
 require('dotenv').config()
 
 const { buttonsConfig } = require('./modules/keyboard')
@@ -13,11 +11,13 @@ const formController = require('./controllers/formController')
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const webAppUrl = 'https://' + process.env.WEB_APP_URL
 
-const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true })
-const app = express()
+const app = Fastify({
+  trustProxy: true
+})
 
-app.use(express.json())
-app.use(cors())
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true })
+
+app.register(require('@fastify/cors'), {})
 
 bot.on('message', async (msg) => {
 
@@ -64,7 +64,4 @@ bot.on('message', async (msg) => {
 })
 
 app.post('/submit-form', formController.handleFormSubmit)
-
-const PORT = Number(process.env.PORT) || 7999
-app.listen(PORT, () => console.log('server started on PORT ' + PORT))
 
