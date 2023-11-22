@@ -17,6 +17,19 @@ async function bookOnLineScene(bot, msg) {
     console.log(err)
   }
 }
+async function servicesSetScene(bot, msg) {
+  try {
+    const chatId = msg.chat.id
+    await bot.sendMessage(chatId, buttonsConfig["servicesSet"].title, {
+      reply_markup: {
+        inline_keyboard: buttonsConfig["servicesSet"].buttons,
+        resize_keyboard: true
+      }
+    })
+  } catch (err) {
+    console.log(err)
+  }
+}
 
 async function masterOrServiceOrAnyScene(bot, msg) {
   try {
@@ -133,4 +146,4 @@ async function bookTimeScene(bot, msg, selectedByUser) {
   }
 }
 
-module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masterOrServiceOrAnyScene }
+module.exports = { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene, bookTimeScene, masterOrServiceOrAnyScene, servicesSetScene }

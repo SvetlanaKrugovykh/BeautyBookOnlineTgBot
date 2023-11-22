@@ -20,6 +20,21 @@ const buttonsConfig = {
     ])
   },
 
+  servicesSet: {
+    title: 'Оберіть будь ласка набір послуг',
+    options: {},
+    buttons: [
+      [
+        { text: 'Догляд за волоссям', callback_data: '77_1' },
+        { text: 'Манікюр', callback_data: '77_2' },
+      ],
+      [
+        { text: 'Педікюр', callback_data: '77_3' },
+        { text: 'Догляд за обличчям', callback_data: '77_4' },
+      ]
+    ]
+  },
+
   masterOrServiceButtons: {
     title: 'Оберіть будь ласка майстра або послугу',
     options: { resize_keyboard: true },

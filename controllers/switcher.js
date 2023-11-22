@@ -4,7 +4,7 @@ const { clientsAdmin, clientsAdminGetInfo, clientsAdminResponseToRequest } = req
 const { schedullerScene, dataTimeeSelection } = require('./scheduler')
 const supportScene = require('./support')
 const { bookOnLineScene, bookMasterScene, bookServiceScene, bookAnyScene,
-  masterOrServiceOrAnyScene } = require('./bookOnLine')
+  masterOrServiceOrAnyScene, servicesSetScene } = require('./bookOnLine')
 const { createOrder } = require('./orders')
 const signUpForm = require('./signUp').signUpForm
 
@@ -55,6 +55,10 @@ async function handler(bot, msg, webAppUrl) {
       await schedullerScene(bot, msg)
       break
     case '1_37':
+      if (!selectedByUser[msg.chat.id]?.servicesSet) {
+        await servicesSetScene(bot, msg)
+        break
+      }
       await masterOrServiceOrAnyScene(bot, msg)
       break
     case '2_1':
@@ -127,7 +131,9 @@ async function chooseLocation(bot, msg) {
       const location_id = `1_${id}`
       selectedByUser[msg.chat.id].location_id = location_id
       console.log(`Location ID is: 1_${id}`)
-      await masterOrServiceOrAnyScene(bot, msg)
+      if (!selectedByUser[msg.chat.id]?.servicesSet) {
+        await servicesSetScene(bot, msg)
+      } else await masterOrServiceOrAnyScene(bot, msg)
     }
   } catch (error) { console.log(error) }
 }
@@ -185,4 +191,12 @@ async function adminMenu(bot, msg, adminStartButtons) {
 }
 //#endregion
 
-module.exports = { handler, guestMenu, adminMenu }
+function addToSelectedServices(chatId, service) {
+  if (!selectedByUser[chatId]?.servicesSet) {
+    selectedByUser[chatId].servicesSet = [];
+  }
+  selectedByUser[chatId].servicesSet.push(service);
+  console.log(`Выбранные услуги для ${chatId}:`, selectedByUser[chatId].servicesSet);
+}
+
+module.exports = { handler, guestMenu, adminMenu, addToSelectedServices }
